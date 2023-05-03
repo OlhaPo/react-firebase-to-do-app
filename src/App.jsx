@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   query,
@@ -70,6 +71,9 @@ function App() {
   };
 
   // Delete todo
+  const deleteTask = (id) => {
+    deleteDoc(doc(db, "todos", id));
+  };
 
   return (
     <div className={style.bg}>
@@ -89,7 +93,12 @@ function App() {
         </form>
         <ul>
           {todos.map((todo, index) => (
-            <ToDo key={index} todo={todo} toggleComplete={toggleComplete} />
+            <ToDo
+              key={index}
+              todo={todo}
+              toggleComplete={toggleComplete}
+              deleteTask={deleteTask}
+            />
           ))}
         </ul>
         {todos.length < 1 ? null : (

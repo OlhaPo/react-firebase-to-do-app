@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import ToDo from "./ToDo";
 import { useState } from "react";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
 
 const style = {
@@ -42,6 +48,12 @@ function App() {
   }, []);
 
   // Update todo in firebase
+  const toggleComplete = (todo) => {
+    updateDoc(doc(db, "todos", todo.id), {
+      completed: !todo.completed,
+    });
+    //
+  };
 
   // Delete todo
 
@@ -57,7 +69,7 @@ function App() {
         </form>
         <ul>
           {todos.map((todo, index) => (
-            <ToDo key={index} todo={todo} />
+            <ToDo key={index} todo={todo} toggleComplete={toggleComplete} />
           ))}
         </ul>
         <p className={style.count}>You have 2 to-dos</p>

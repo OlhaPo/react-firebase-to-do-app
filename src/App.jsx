@@ -3,6 +3,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import ToDo from "./ToDo";
 import { useState } from "react";
 import {
+  addDoc,
   collection,
   doc,
   onSnapshot,
@@ -23,8 +24,21 @@ const style = {
 
 function App() {
   const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState("");
 
   // Create todo
+  const addTask = async (e) => {
+    e.preventDefault(e);
+    if (input === "") {
+      alert("Enter a valid task");
+      return;
+    }
+    await addDoc(collection(db, "todos"), {
+      title: input,
+      completed: false,
+    });
+    setInput("");
+  };
 
   // Read todo from firebase
   useEffect(() => {
@@ -61,8 +75,14 @@ function App() {
     <div className={style.bg}>
       <div className={style.container}>
         <h3 className={style.heading}>TO-DO APP</h3>
-        <form className={style.form}>
-          <input className={style.input} type="text" placeholder="Add to-do " />
+        <form onSubmit={addTask} className={style.form}>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className={style.input}
+            type="text"
+            placeholder="Add to-do "
+          />
           <button className={style.button}>
             <AiOutlinePlus size={30} />
           </button>
@@ -72,7 +92,9 @@ function App() {
             <ToDo key={index} todo={todo} toggleComplete={toggleComplete} />
           ))}
         </ul>
-        <p className={style.count}>You have 2 to-dos</p>
+        {todos.length < 1 ? null : (
+          <p className={style.count}>You have {todos.length} to-dos</p>
+        )}
       </div>
     </div>
   );

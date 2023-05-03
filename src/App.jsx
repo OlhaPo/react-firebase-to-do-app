@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import ToDo from "./ToDo";
 import { useState } from "react";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { db } from "./firebase";
 
 const style = {
   bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#2F80ED] to-[#1CB5E0]`,
@@ -14,7 +16,35 @@ const style = {
 };
 
 function App() {
-  const [todos, setTodos] = useState(["Learn React", "Learn Tailwind"]);
+  const [todos, setTodos] = useState([]);
+
+  // Create todo
+
+  // Read todo from firebase
+  useEffect(() => {
+    // preparation
+    const q = query(collection(db, "todos"));
+
+    // subscribe to changes
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      // on new data from FB
+
+      let todosArr = [];
+      querySnapshot.forEach((doc) =>
+        todosArr.push({ ...doc.data(), id: doc.id })
+      );
+      setTodos(todosArr);
+      console.log(todosArr);
+    });
+
+    // on destroy
+    return () => unsubscribe();
+  }, []);
+
+  // Update todo in firebase
+
+  // Delete todo
+
   return (
     <div className={style.bg}>
       <div className={style.container}>
